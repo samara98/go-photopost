@@ -23,8 +23,18 @@ func NewUsersControllerV1(
 }
 
 func (uc UsersControllerV1) Run(router *gin.RouterGroup) {
+	router.POST("/", uc.CreateUser)
 	router.GET("/", uc.GetUserList)
 	router.GET("/:userId", uc.GetUser)
+}
+
+func (uc UsersControllerV1) CreateUser(c *gin.Context) {
+	var body CreateUserDto
+	c.Bind(&body)
+
+	result := uc.UsersService.CreateUser(body)
+
+	c.JSON(http.StatusCreated, result)
 }
 
 func (uc UsersControllerV1) GetUserList(c *gin.Context) {

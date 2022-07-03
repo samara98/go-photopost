@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
 
 type PostsServiceV1Interface interface {
@@ -12,10 +13,15 @@ type PostsServiceV1Interface interface {
 }
 
 type PostsServiceV1 struct {
+	DB *gorm.DB
 }
 
-func NewPostsServiceV1() *PostsServiceV1 {
-	return &PostsServiceV1{}
+func NewPostsServiceV1(
+	db *gorm.DB,
+) *PostsServiceV1 {
+	return &PostsServiceV1{
+		DB: db,
+	}
 }
 
 func (ps PostsServiceV1) GetPostList() []gin.H {

@@ -1,0 +1,5 @@
+development:
+  dialect: postgres
+  datasource: host=prodhost dbname=proddb user=${DB_USER} password=${DB_PASSWORD} sslmode=required
+  dir: migrations
+  table: migrations
