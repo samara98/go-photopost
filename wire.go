@@ -6,6 +6,7 @@ package main
 import (
 	"go-photopost/src"
 	"go-photopost/src/lib"
+	"go-photopost/src/middlewares"
 	"go-photopost/src/modules/posts"
 	"go-photopost/src/modules/users"
 
@@ -15,6 +16,8 @@ import (
 func InitApp() *src.App {
 	wire.Build(
 		lib.NewDatabase,
+		lib.NewJWTAuthHelper,
+		middlewares.NewJWTAuthMiddleware,
 		usersSvcV1,
 		usersCtlV1,
 		usersModule,
