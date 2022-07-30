@@ -9,12 +9,14 @@ import (
 	"go-photopost/src/middlewares"
 	"go-photopost/src/modules/posts"
 	"go-photopost/src/modules/users"
+	"log"
 
 	"github.com/google/wire"
 )
 
-func InitApp() *src.App {
+func InitApp() *src.Server {
 	wire.Build(
+		log.Default,
 		lib.NewDatabase,
 		lib.NewJWTAuthHelper,
 		middlewares.NewJWTAuthMiddleware,
@@ -24,10 +26,15 @@ func InitApp() *src.App {
 		postsSvcV1,
 		postsCtlV1,
 		postsModule,
-		src.NewApp,
+		appModule,
+		src.NewServer,
 	)
-	return &src.App{}
+	return &src.Server{}
 }
+
+var appModule = wire.NewSet(
+	src.NewAppModule,
+)
 
 var usersModule = wire.NewSet(
 	users.NewUsersModule,

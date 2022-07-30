@@ -10,13 +10,16 @@ import (
 )
 
 type JWTAuthMiddleware struct {
+	Log           *log.Logger
 	JWTAuthHelper *lib.JWTAuthHelper
 }
 
 func NewJWTAuthMiddleware(
+	log *log.Logger,
 	jwtHelper *lib.JWTAuthHelper,
 ) *JWTAuthMiddleware {
 	return &JWTAuthMiddleware{
+		log,
 		jwtHelper,
 	}
 }
@@ -39,7 +42,7 @@ func (m JWTAuthMiddleware) Handler() gin.HandlerFunc {
 			c.JSON(http.StatusInternalServerError, gin.H{
 				"error": err.Error(),
 			})
-			log.Default().Println(err)
+			m.Log.Println(err)
 			c.Abort()
 			return
 		}

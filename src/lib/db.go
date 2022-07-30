@@ -10,7 +10,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func NewDatabase() *gorm.DB {
+func NewDatabase(logger *log.Logger) *gorm.DB {
 	dsn := fmt.Sprintf(
 		"host=%s user=%s password=%s dbname=%s port=%s",
 		os.Getenv("DB_HOST"),
@@ -22,7 +22,7 @@ func NewDatabase() *gorm.DB {
 
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
-		log.Default().Println(err.Error())
+		logger.Println(err.Error())
 		panic("failed to connect database")
 	}
 

@@ -6,76 +6,48 @@ import (
 	"go-photopost/src/helpers"
 	"go-photopost/src/lib"
 	"go-photopost/src/middlewares"
-	"go-photopost/src/modules/posts"
-	"go-photopost/src/modules/users"
 	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/thinkerou/favicon"
 	"gorm.io/gorm"
 )
 
-type App struct {
+type AppModule struct {
+	Log               *log.Logger
 	DB                *gorm.DB
 	JWTAuthHelper     *lib.JWTAuthHelper
 	JWTAuthMiddleware *middlewares.JWTAuthMiddleware
-	UsersModule       *users.UsersModule
-	PostsModule       *posts.PostsModule
 }
 
-func NewApp(
+func NewAppModule(
+	log *log.Logger,
 	db *gorm.DB,
 	jwtAuthHelper *lib.JWTAuthHelper,
 	jwtAuthMiddleware *middlewares.JWTAuthMiddleware,
-	usersModule *users.UsersModule,
-	postsModule *posts.PostsModule,
-) *App {
-	return &App{
+) *AppModule {
+	return &AppModule{
+		log,
 		db,
 		jwtAuthHelper,
 		jwtAuthMiddleware,
-		usersModule,
-		postsModule,
 	}
 }
 
-func (app App) Start() {
-	r := gin.Default()
-	r.Use(favicon.New("./favicon.ico"))
+func (app AppModule) Router(r *gin.Engine) {
 	r.GET("/", app.greet)
 	r.POST("/register", app.register)
 	r.POST("/login", app.login)
 	r.GET("/me", app.JWTAuthMiddleware.Handler(), app.me)
-
-	// version 1
-	apiV1 := r.Group("v1")
-
-	// routes
-	app.UsersModule.Router(apiV1)
-	app.PostsModule.Router(apiV1)
-
-	r.NoRoute(func(c *gin.Context) {
-		c.JSON(404, gin.H{"statusCode": http.StatusNotFound, "message": "Not Found"})
-	})
-
-	r.Run()
 }
 
-func (app App) greet(c *gin.Context) {
+func (app AppModule) greet(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"message": "Hello, World!",
 	})
 }
 
-type RegisterUserDto struct {
-	Email    string `form:"name"`
-	Username string `form:"username"`
-	Password string `form:"password"`
-	Name     string `form:"name"`
-}
-
-func (app App) register(c *gin.Context) {
+func (app AppModule) register(c *gin.Context) {
 	var body RegisterUserDto
 	c.Bind(&body)
 
@@ -92,12 +64,7 @@ func (app App) register(c *gin.Context) {
 	c.JSON(http.StatusCreated, user)
 }
 
-type LoginUserDto struct {
-	UserSession string `form:"userSession"`
-	Password    string `form:"password"`
-}
-
-func (app App) login(c *gin.Context) {
+func (app AppModule) login(c *gin.Context) {
 	var body LoginUserDto
 	c.Bind(&body)
 
@@ -126,10 +93,10 @@ func (app App) login(c *gin.Context) {
 	c.JSON(http.StatusCreated, token)
 }
 
-func (app App) me(c *gin.Context) {
+func (app AppModule) me(c *gin.Context) {
 	user, _ := c.Get("user")
 
-	log.Default().Println(user)
+	app.Log.Println(user)
 
 	c.JSON(http.StatusOK, gin.H{
 		"message": "authorized",

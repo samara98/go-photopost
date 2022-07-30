@@ -9,9 +9,11 @@ import (
 //go:generate go run github.com/google/wire/cmd/wire
 
 func main() {
+	logger := log.Default()
+
 	err := godotenv.Load()
 	if err != nil {
-		log.Default().Println(err.Error())
+		logger.Println(err.Error())
 	}
 
 	app := InitApp()

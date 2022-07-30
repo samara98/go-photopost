@@ -16,6 +16,7 @@ type Token struct {
 
 // JWTAuthHelper service relating to authorization
 type JWTAuthHelper struct {
+	Log *log.Logger
 }
 
 // NewJWTAuthHelper creates a new auth service
@@ -35,7 +36,7 @@ func (s JWTAuthHelper) CreateToken(user entities.User) *Token {
 	tokenString, err := token.SignedString([]byte(os.Getenv("JWT_SECRET")))
 
 	if err != nil {
-		log.Default().Println("JWT validation failed: ", err)
+		s.Log.Println("JWT validation failed: ", err)
 	}
 
 	return &Token{
