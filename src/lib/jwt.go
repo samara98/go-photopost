@@ -58,7 +58,6 @@ func (j JWTAuthHelper) CreateToken(user entities.User) *Token {
 // Authorize authorizes the generated token
 func (j JWTAuthHelper) Authorize(tokenString string) (*entities.User, error) {
 	token, err := jwt.Parse(tokenString, func(t *jwt.Token) (interface{}, error) {
-		j.Log.Println("j.Env.JWTSecret", j.Env.JWTSecret)
 		return []byte(j.Env.JWTSecret), nil
 	})
 
