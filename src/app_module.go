@@ -98,11 +98,10 @@ func (app AppModule) login(c *gin.Context) {
 }
 
 func (app AppModule) me(c *gin.Context) {
-	user, _ := c.Get("user")
+	userAny, _ := c.Get("user")
+	user := userAny.(*entities.User)
 
 	app.Log.Println(user)
 
-	c.JSON(http.StatusOK, gin.H{
-		"message": "authorized",
-	})
+	c.JSON(http.StatusOK, user)
 }

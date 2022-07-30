@@ -29,13 +29,11 @@ func (m JWTAuthMiddleware) Handler() gin.HandlerFunc {
 		authHeader := c.Request.Header.Get("Authorization")
 		t := strings.Split(authHeader, " ")
 
-		c.Set("user", gin.H{
-			"id": 1,
-		})
 		if len(t) == 2 {
 			authToken := t[1]
-			authorized, err := m.JWTAuthHelper.Authorize(authToken)
-			if authorized {
+			user, err := m.JWTAuthHelper.Authorize(authToken)
+			if user != nil {
+				c.Set("user", user)
 				c.Next()
 				return
 			}

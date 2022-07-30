@@ -3,15 +3,13 @@ package users
 import (
 	"go-photopost/src/entities"
 	"go-photopost/src/helpers"
-	"time"
 
-	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
 
 type UsersServiceV1Interface interface {
 	CreateUser(body CreateUserDto) entities.User
-	GetUserList() []gin.H
+	GetUserList() []entities.User
 	GetUser() entities.User
 }
 
@@ -42,27 +40,11 @@ func (us UsersServiceV1) CreateUser(body CreateUserDto) entities.User {
 	return user
 }
 
-func (us UsersServiceV1) GetUserList() []gin.H {
-	result := []gin.H{
-		{
-			"id":        1,
-			"createdAt": time.Now(),
-			"updatedAt": time.Now(),
-			"name":      "Sulthon Abdul Malik",
-			"email":     "sulthon@mailsac.com",
-			"birthdate": nil,
-		},
-		{
-			"id":        1,
-			"createdAt": time.Now(),
-			"updatedAt": time.Now(),
-			"name":      "Samara 98",
-			"email":     "samara98@mailsac.com",
-			"birthdate": nil,
-		},
-	}
+func (us UsersServiceV1) GetUserList() []entities.User {
+	var users []entities.User
+	us.DB.Find(&users)
 
-	return result
+	return users
 }
 
 func (us UsersServiceV1) GetUser() entities.User {
