@@ -1,7 +1,7 @@
 package src
 
 type RegisterUserDto struct {
-	Email    string `form:"name"`
+	Email    string `form:"email"`
 	Username string `form:"username"`
 	Password string `form:"password"`
 	Name     string `form:"name"`

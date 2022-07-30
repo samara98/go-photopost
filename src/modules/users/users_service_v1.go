@@ -3,29 +3,33 @@ package users
 import (
 	"go-photopost/src/entities"
 	"go-photopost/src/helpers"
+	"log"
 
 	"gorm.io/gorm"
 )
 
 type UsersServiceV1Interface interface {
-	CreateUser(body CreateUserDto) entities.User
+	CreateUser(body CreateUserDto) *entities.User
 	GetUserList() []entities.User
-	GetUser() entities.User
+	GetUser(uri *GetUserByIdUri) *entities.User
 }
 
 type UsersServiceV1 struct {
-	DB *gorm.DB
+	Log *log.Logger
+	DB  *gorm.DB
 }
 
 func NewUsersServiceV1(
+	log *log.Logger,
 	db *gorm.DB,
 ) *UsersServiceV1 {
 	return &UsersServiceV1{
-		DB: db,
+		Log: log,
+		DB:  db,
 	}
 }
 
-func (us UsersServiceV1) CreateUser(body CreateUserDto) entities.User {
+func (us UsersServiceV1) CreateUser(body CreateUserDto) *entities.User {
 	hashedPassword := helpers.HashPassword([]byte(body.Password))
 
 	user := entities.User{
@@ -37,7 +41,7 @@ func (us UsersServiceV1) CreateUser(body CreateUserDto) entities.User {
 	}
 	us.DB.Create(&user)
 
-	return user
+	return &user
 }
 
 func (us UsersServiceV1) GetUserList() []entities.User {
@@ -47,18 +51,9 @@ func (us UsersServiceV1) GetUserList() []entities.User {
 	return users
 }
 
-func (us UsersServiceV1) GetUser() entities.User {
-	// result := gin.H{
-	// 	"id":        1,
-	// 	"createdAt": time.Now(),
-	// 	"updatedAt": time.Now(),
-	// 	"name":      "Sulthon Abdul Malik",
-	// 	"email":     "sulthon@mailsac.com",
-	// 	"birthdate": nil,
-	// }
-
+func (us UsersServiceV1) GetUser(uri *GetUserByIdUri) *entities.User {
 	var user entities.User
-	us.DB.First(&user, 1)
+	us.DB.First(&user, uri.ID)
 
-	return user
+	return &user
 }
