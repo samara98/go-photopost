@@ -4,20 +4,19 @@ import (
 	"fmt"
 	"go-photopost/src/entities"
 	"log"
-	"os"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
-func NewDatabase(logger *log.Logger) *gorm.DB {
+func NewDatabase(logger *log.Logger, env *Env) *gorm.DB {
 	dsn := fmt.Sprintf(
 		"host=%s user=%s password=%s dbname=%s port=%s",
-		os.Getenv("DB_HOST"),
-		os.Getenv("DB_USER"),
-		os.Getenv("DB_PASS"),
-		os.Getenv("DB_NAME"),
-		os.Getenv("DB_PORT"),
+		env.DBHost,
+		env.DBUsername,
+		env.DBPassword,
+		env.DBName,
+		env.DBPort,
 	)
 
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})

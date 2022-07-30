@@ -14,9 +14,10 @@ import (
 	"github.com/google/wire"
 )
 
-func InitApp() *src.Server {
+func InitServer() *src.Server {
 	wire.Build(
 		log.Default,
+		lib.NewEnv,
 		lib.NewDatabase,
 		lib.NewJWTAuthHelper,
 		middlewares.NewJWTAuthMiddleware,
@@ -34,6 +35,10 @@ func InitApp() *src.Server {
 
 var appModule = wire.NewSet(
 	src.NewAppModule,
+	wire.Bind(
+		new(src.AppModuleInterface),
+		new(*src.AppModule),
+	),
 )
 
 var usersModule = wire.NewSet(

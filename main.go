@@ -16,7 +16,7 @@ func main() {
 		logger.Println(err.Error())
 	}
 
-	app := InitApp()
+	server := InitServer()
 
-	app.Start()
+	server.Start()
 }

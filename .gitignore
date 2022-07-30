@@ -15,4 +15,5 @@
 # vendor/
 
 # Custom
+.env
 wire_gen.go

@@ -13,6 +13,10 @@ import (
 	"gorm.io/gorm"
 )
 
+type AppModuleInterface interface {
+	Router(r *gin.Engine)
+}
+
 type AppModule struct {
 	Log               *log.Logger
 	DB                *gorm.DB
