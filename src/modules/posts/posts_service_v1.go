@@ -1,61 +1,53 @@
 package posts
 
 import (
-	"time"
+	"go-photopost/src/entities"
+	"log"
 
-	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
 
 type PostsServiceV1Interface interface {
-	GetPostList() []gin.H
-	GetPost() gin.H
+	CreatePost(user *entities.User, createPostDto *CreatePostDto) *entities.Post
+	GetPostList() []entities.Post
+	GetPost(uri *GetPostByIdUri) *entities.Post
 }
 
 type PostsServiceV1 struct {
-	DB *gorm.DB
+	Log *log.Logger
+	DB  *gorm.DB
 }
 
 func NewPostsServiceV1(
+	log *log.Logger,
 	db *gorm.DB,
 ) *PostsServiceV1 {
 	return &PostsServiceV1{
-		DB: db,
+		Log: log,
+		DB:  db,
 	}
 }
 
-func (ps PostsServiceV1) GetPostList() []gin.H {
-	result := []gin.H{
-		{
-			"id":          1,
-			"createdAt":   time.Now(),
-			"updatedAt":   time.Now(),
-			"authorId":    "noname",
-			"caption":     "nn",
-			"isPublished": true,
-		},
-		{
-			"id":          2,
-			"createdAt":   time.Now(),
-			"updatedAt":   time.Now(),
-			"authorId":    "noname",
-			"caption":     "nn",
-			"isPublished": true,
-		},
+func (ps PostsServiceV1) CreatePost(user *entities.User, createPostDto *CreatePostDto) *entities.Post {
+	newPost := &entities.Post{
+		AuthorID: user.ID,
+		Caption:  createPostDto.Caption,
 	}
+	ps.DB.Create(newPost)
 
-	return result
+	return newPost
 }
 
-func (ps PostsServiceV1) GetPost() gin.H {
-	result := gin.H{
-		"id":          1,
-		"createdAt":   time.Now(),
-		"updatedAt":   time.Now(),
-		"authorId":    "noname",
-		"caption":     "nn",
-		"isPublished": true,
-	}
+func (ps PostsServiceV1) GetPostList() []entities.Post {
+	var postList []entities.Post
+	ps.DB.Find(&postList)
 
-	return result
+	return postList
+}
+
+func (ps PostsServiceV1) GetPost(uri *GetPostByIdUri) *entities.Post {
+	var post entities.Post
+	ps.DB.Find(&post, uri.ID).First(&post)
+
+	return &post
 }
